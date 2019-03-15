@@ -54,3 +54,36 @@ Chekout the code from github using below link
 >>For more information on configuring Citrix ADC
 * https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
 # Understanding Demo use cases
+# Usecase 1: Basic content switching: switch based on domain. Use servicegroups and HTTP monitors.
+>Topology file: citrix-walmart topology.pptx
+>Relevant configs relating to below procedures are present within cpx.conf file
+* Create servicegroups listening on services from hotdrink and coldrink app on port 80
+* Create content switching CS vserver listening on HTTP
+* Create two dummy lb vservers 
+* Create appropriate CS vserver policy and attach the dummy lb vservers
+* Add http monitors to lb vserver
+* Send a browser request to www.hotdrink.com and www.colddrink.com
+# Usecase 2: SSL OFFLOAD:
+>Topology file:citrix-walmart topology.pptx
+>Relevant configs relating to below procedures are present within cpx.conf file
+>Relevant certs are present within certs folder
+* Create servicegroups listening on services from hotdrink and colddrink app on port 80
+* Create content switching CS Vserver listening on port 443 (SSL)
+* Create two dummy lb vservers
+* Attach the relevant certs to the vservers
+* Create appropriate CS vserver policy and attach the dummy lb vservers
+* Send a https browser request to www.hotdrink.com and www.colddrink.com
+#Usecase 3: SSL BACKEND:
+>Topology file:citrix-walmart topology.pptx
+>Relevant configs relating to below procedures are present within cpx.conf file
+>Relevant certs are present within certs folder
+* Create servicegroups listening on services from hotdrink and colddrink app on port 443
+* Create content switching CS Vserver listening on port 443 (SSL)
+* Create two dummy lb vservers
+* Attach the relevant certs to the vserver
+* Create appropriate CS VServer policy and attach the dummy lb vservers
+* Send a https browser request to www.hotdrink.com and www.colddrink.com
+* Add new CS and LB vserver for enabling clientauth and serverauth
+* Attach the relevant LB vservers with CS vserver for enabling clientauth and serverauth
+* Send a https request to www.hotdrink.com and www.colddrink.com
+
