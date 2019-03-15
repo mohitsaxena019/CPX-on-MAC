@@ -12,6 +12,7 @@ services:
                         - 9443:9443 
                         - 80:80 
                         - 443:443 
+                        - 4443:4443 
                 depends_on:
                         - hotdrinks1
                         - hotdrinks2
