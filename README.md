@@ -49,7 +49,7 @@ Chekout the code from github using below link
 >>Destroy the demo
 * docker-compose down
 >>To Access the CPX once deployment is up 
-* docker exec -it cpx-demo_cpx_1 bash
+* docker exec -it cpxdemo_cpx_1 bash
 >>To access CPX CLI once you login to cpx 
 * cli_script.sh "show ver"
 >>For NITRO API access to CPX
@@ -245,3 +245,64 @@ bind ssl vserver csvs_hotdrink_ssl_clientauth -certkey cacert -CA
 bind ssl vserver csvs_hotdrink_ssl_clientautH -certkeyName cert_drink
 
 ```
+## Debugging CPX using command line
+CPX login
+```
+docker exec -it <cpx docker name or container ID> bash
+```
+Verify CS vserver
+```
+root@590b90a51752:/# cli_script.sh 'show cs vserver'
+exec: show cs vserver
+1)	csv_drinks_http (127.0.0.1:80) - HTTP	Type: CONTENT 
+	State: UP
+	Last state change was at Fri Mar 15 16:53:04 2019
+	Time since last state change: 0 days, 00:45:38.470  ARP:DISABLED
+	Client Idle Timeout: 180 sec
+	Down state flush: ENABLED
+	Disable Primary Vserver On Down : DISABLED
+	Appflow logging: ENABLED
+	Port Rewrite : DISABLED
+	State Update: DISABLED
+	Default: 	Content Precedence: RULE
+	Vserver IP and Port insertion: OFF 
+	L2Conn: OFF	Case Sensitivity: ON
+	Authentication: OFF
+	401 Based Authentication: OFF
+	Push: DISABLED	Push VServer: 
+	Push Label Rule: none
+	Listen Policy: NONE
+	IcmpResponse: PASSIVE
+	RHIstate:  PASSIVE
+	Traffic Domain: 0
+
+```
+Verify lb vserver
+```
+root@590b90a51752:/# cli_script.sh 'show lb vserver' | grep Type
+1)	lbvs_hotdrink_http (0.0.0.0:0) - HTTP	Type: ADDRESS 
+2)	lbvs_colddrink_http (0.0.0.0:0) - HTTP	Type: ADDRESS 
+3)	lbvs_hotdrink_ssl (0.0.0.0:0) - HTTP	Type: ADDRESS 
+4)	lbvs_colddrink_ssl (0.0.0.0:0) - HTTP	Type: ADDRESS 
+5)	lbvs_hotdrink_ssl_clientauth (0.0.0.0:0) - HTTP	Type: ADDRESS 
+6)	lbvs_colddrink_ssl_clientauth (0.0.0.0:0) - HTTP	Type: ADDRESS 
+
+```
+
+Verify running configuration
+
+```
+root@590b90a51752:/# cli_script.sh 'show run'                   
+exec: show run
+#NS12.1 Build 51.16
+# Last modified Fri Mar 15 16:53:02 2019
+set ns config -IPAddress 172.100.100.254 -netmask 255.255.255.0
+set ns config -tagged NO
+enable ns feature LB CS SSL AAA
+enable ns mode L3 USNIP PMTUD
+
+OUTPUT TRIMMED
+.......
+```
+
+
