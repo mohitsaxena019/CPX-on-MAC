@@ -27,7 +27,7 @@ Write the following config in /etc/hosts file to run all the demo examples from 
  * 127.0.0.1       www.hotdrink.com
  * 127.0.0.1       www.colddrink.com
 # Demo Port Requirement
-For this demo setup it will be using port
+This demo uses following ports
 * 80 (To access the test domain on http)
 * 443 (To access the test domain on SSL)
 * 4443 (To access the test domain on SSL with clientauth enabled)
@@ -39,5 +39,8 @@ For this demo setup it will be using port
 Chekout the code from github using below link
 * git clone https://github.com/mohitsaxena019/CPX-on-MAC.git
 >Once the code is downloaded, Navigate to CPX-on-MAC/cpx-demo folder. And use below command to start and stop the test environment. Before starting the test environment please make sure to update the /etc/hosts file with above mentioned domain names.
-
+> To Start
+* docker-compose up -d
+> To Stop
+* docker-compose down
 # Starting with Citrix ADC CPX
