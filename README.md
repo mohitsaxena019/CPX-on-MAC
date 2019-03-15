@@ -33,11 +33,11 @@ For this demo setup it will be using port
 * 4443 (To access the test domain on SSL with clientauth enabled)
 * 9080 (To Configure CPX via nitro api’s on http)
 * 9443 (To configure CPX via nitro api’s on https)
-If any of these ports are not available then test environment will fail to start, in such cases please update docker-compose file with some other free ports.
+>If any of these ports are not available then test environment will fail to start, in such cases please update docker-compose file with some other free ports.
 
 # Deploying test environment
 Chekout the code from github using below link
 * git clone https://github.com/mohitsaxena019/CPX-on-MAC.git
->navigate to CPX-on-MAC/cpx-demo folder. And use below command to start and stop the test environment. Before starting the test environment please make sure to update the /etc/hosts file with above mentioned domain names.
+>Once the code is downloaded, Navigate to CPX-on-MAC/cpx-demo folder. And use below command to start and stop the test environment. Before starting the test environment please make sure to update the /etc/hosts file with above mentioned domain names.
 
 # Starting with Citrix ADC CPX
