@@ -167,7 +167,7 @@ bind ssl vserver csv_drinks_ssl -certkeyName cert_drink
 
 ```
 
-## Usecase 3: SSL BACKEND:
+## Usecase 3: SSL BACKEND: CLIENT AUTHENTICATION INCLUDED:
 
 <img width="1276" alt="Screenshot 2019-03-15 at 11 46 09 PM" src="https://user-images.githubusercontent.com/43468858/54453219-e2513380-477c-11e9-9b3c-78cc0de2cb56.png">
 
@@ -244,70 +244,14 @@ bind ssl vserver csvs_hotdrink_ssl_clientauth -certkey cacert -CA
 bind ssl vserver csvs_hotdrink_ssl_clientautH -certkeyName cert_drink
 
 ```
-## Debugging CPX using command line
+
+## UseCase 4: Example of applying a responder policy through command line on CPX
+### Denying access to www.hotdrink.com using responder policy
+
 CPX login
 ```
 docker exec -it <cpx docker name or container ID> bash
 ```
-Verify CS vserver
-```
-root@590b90a51752:/# cli_script.sh 'show cs vserver'
-exec: show cs vserver
-1)	csv_drinks_http (127.0.0.1:80) - HTTP	Type: CONTENT 
-	State: UP
-	Last state change was at Fri Mar 15 16:53:04 2019
-	Time since last state change: 0 days, 00:45:38.470  ARP:DISABLED
-	Client Idle Timeout: 180 sec
-	Down state flush: ENABLED
-	Disable Primary Vserver On Down : DISABLED
-	Appflow logging: ENABLED
-	Port Rewrite : DISABLED
-	State Update: DISABLED
-	Default: 	Content Precedence: RULE
-	Vserver IP and Port insertion: OFF 
-	L2Conn: OFF	Case Sensitivity: ON
-	Authentication: OFF
-	401 Based Authentication: OFF
-	Push: DISABLED	Push VServer: 
-	Push Label Rule: none
-	Listen Policy: NONE
-	IcmpResponse: PASSIVE
-	RHIstate:  PASSIVE
-	Traffic Domain: 0
-
-```
-Verify lb vserver
-```
-root@590b90a51752:/# cli_script.sh 'show lb vserver' | grep Type
-1)	lbvs_hotdrink_http (0.0.0.0:0) - HTTP	Type: ADDRESS 
-2)	lbvs_colddrink_http (0.0.0.0:0) - HTTP	Type: ADDRESS 
-3)	lbvs_hotdrink_ssl (0.0.0.0:0) - HTTP	Type: ADDRESS 
-4)	lbvs_colddrink_ssl (0.0.0.0:0) - HTTP	Type: ADDRESS 
-5)	lbvs_hotdrink_ssl_clientauth (0.0.0.0:0) - HTTP	Type: ADDRESS 
-6)	lbvs_colddrink_ssl_clientauth (0.0.0.0:0) - HTTP	Type: ADDRESS 
-
-```
-
-Verify running configuration
-
-```
-root@590b90a51752:/# cli_script.sh 'show run'                   
-exec: show run
-#NS12.1 Build 51.16
-# Last modified Fri Mar 15 16:53:02 2019
-set ns config -IPAddress 172.100.100.254 -netmask 255.255.255.0
-set ns config -tagged NO
-enable ns feature LB CS SSL AAA
-enable ns mode L3 USNIP PMTUD
-
-OUTPUT TRIMMED
-.......
-```
-
-
-# Example of applying a responder policy through command line on CPX
-## Denying access to www.hotdrink.com using responder policy
-
 Enable responder rewrite feature
 ```
 root@590b90a51752:/# cli_script.sh 'enable feature responder rewrite'
@@ -371,7 +315,7 @@ Done
 
 Access www.hotdrink.com to view the webpage
 
-## Similarly try adding rewrite policies to CPX. Please check the documentation within the following links for adding rewrite and responder policies
+### Similarly try adding rewrite policies to CPX. Please check the documentation within the following links for adding rewrite and responder policies
 
 [CPX Rewrite Policy](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/rewrite/rewrite-policy/rewrite-policy/)
 
@@ -380,4 +324,67 @@ Access www.hotdrink.com to view the webpage
 [CPX Responder Policy](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/responder/responder-policy/responder-policy/)
 
 [CX Responder Action](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/responder/responder-action/responder-action/)
+
+
+## Debugging CPX using command line
+CPX login
+```
+docker exec -it <cpx docker name or container ID> bash
+```
+Verify CS vserver
+```
+root@590b90a51752:/# cli_script.sh 'show cs vserver'
+exec: show cs vserver
+1)	csv_drinks_http (127.0.0.1:80) - HTTP	Type: CONTENT 
+	State: UP
+	Last state change was at Fri Mar 15 16:53:04 2019
+	Time since last state change: 0 days, 00:45:38.470  ARP:DISABLED
+	Client Idle Timeout: 180 sec
+	Down state flush: ENABLED
+	Disable Primary Vserver On Down : DISABLED
+	Appflow logging: ENABLED
+	Port Rewrite : DISABLED
+	State Update: DISABLED
+	Default: 	Content Precedence: RULE
+	Vserver IP and Port insertion: OFF 
+	L2Conn: OFF	Case Sensitivity: ON
+	Authentication: OFF
+	401 Based Authentication: OFF
+	Push: DISABLED	Push VServer: 
+	Push Label Rule: none
+	Listen Policy: NONE
+	IcmpResponse: PASSIVE
+	RHIstate:  PASSIVE
+	Traffic Domain: 0
+
+```
+Verify lb vserver
+```
+root@590b90a51752:/# cli_script.sh 'show lb vserver' | grep Type
+1)	lbvs_hotdrink_http (0.0.0.0:0) - HTTP	Type: ADDRESS 
+2)	lbvs_colddrink_http (0.0.0.0:0) - HTTP	Type: ADDRESS 
+3)	lbvs_hotdrink_ssl (0.0.0.0:0) - HTTP	Type: ADDRESS 
+4)	lbvs_colddrink_ssl (0.0.0.0:0) - HTTP	Type: ADDRESS 
+5)	lbvs_hotdrink_ssl_clientauth (0.0.0.0:0) - HTTP	Type: ADDRESS 
+6)	lbvs_colddrink_ssl_clientauth (0.0.0.0:0) - HTTP	Type: ADDRESS 
+
+```
+
+Verify running configuration
+
+```
+root@590b90a51752:/# cli_script.sh 'show run'                   
+exec: show run
+#NS12.1 Build 51.16
+# Last modified Fri Mar 15 16:53:02 2019
+set ns config -IPAddress 172.100.100.254 -netmask 255.255.255.0
+set ns config -tagged NO
+enable ns feature LB CS SSL AAA
+enable ns mode L3 USNIP PMTUD
+
+OUTPUT TRIMMED
+.......
+```
+
+
 
