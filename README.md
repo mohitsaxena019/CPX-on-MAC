@@ -59,6 +59,7 @@ Chekout the code from github using below link
 >>For more information on configuring Citrix ADC
 * https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
 # Understanding Demo use cases
+>All the configuration related to Demo use cases are applied on the CPX when 'docker-compose up -d' is executed
 ## Usecase 1: Basic content switching: switch based on domain. Use servicegroups and HTTP monitors.
 
 
@@ -70,15 +71,51 @@ Chekout the code from github using below link
 * Create content switching CS vserver listening on HTTP
 * Create two dummy lb vservers 
 * Create appropriate CS vserver policy and attach the dummy lb vservers
-* Add http monitors to lb vserver
+* Add http monitors to servicegroup
 * Send a browser request to www.hotdrink.com and www.colddrink.com
+
+```
+Relevant configuration:
+##NetScaler feature to be enabled for these use cases
+enable feature lb cs
+
+#HTTP Backend Service for HotDrink app running two instance
+add serviceGroup sg_hotdrink_http HTTP
+bind serviceGroup sg_hotdrink_http 172.100.100.3 80
+bind serviceGroup sg_hotdrink_http 172.100.100.4 80
+add lb vserver lbvs_hotdrink_http HTTP 0.0.0.0 0
+bind lb vserver lbvs_hotdrink_http sg_hotdrink_http
+
+#HTTP Backend Service for ColdDrink app running two instance
+add serviceGroup sg_colddrink_http HTTP
+bind serviceGroup sg_colddrink_http 172.100.100.5 80
+bind serviceGroup sg_colddrink_http 172.100.100.6 80
+add lb vserver lbvs_colddrink_http HTTP 0.0.0.0 0
+bind lb vserver lbvs_colddrink_http sg_colddrink_http
+#Add HTTP monitor
+add lb monitor monitorhttp HTTP -respCode 200 -httpRequest "GET /"
+bind servicegroup sg_hotdrink_http -monitorName monitorhttp
+bind servicegroup sg_colddrink_http -monitorName monitorhttp
+
+#Add CS policy and action
+add cs action csa_hotdrink -targetLBVserver lbvs_hotdrink_http
+add cs action csa_colddrink -targetLBVserver lbvs_colddrink_http
+add cs policy csp_hotdrink -rule "HTTP.REQ.HOSTNAME.SERVER.EQ(\"www.hotdrink.com\")" -action csa_hotdrink
+add cs policy csp_colddrink -rule "HTTP.REQ.HOSTNAME.SERVER.EQ(\"www.colddrink.com\")" -action csa_colddrink 
+
+#Add HTTP cs vserver for hotdrink and cold drink domain to content switch
+add cs vserver csv_drinks_http HTTP 127.0.0.1 80
+bind cs vserver csv_drinks_http -policyName csp_hotdrink -priority 20001
+bind cs vserver csv_drinks_http -policyName csp_colddrink -priority 20002
+
+```
 ## Usecase 2: SSL OFFLOAD:
 
 
 <img width="1272" alt="Screenshot 2019-03-15 at 10 35 02 PM" src="https://user-images.githubusercontent.com/43468858/54448953-ff810480-4772-11e9-83af-2f28520a3715.png">
 
 
->Relevant configs relating to below procedures are present within cpx.conf file
+>Relevant configs relating to below procedures are present within cpx.conf file. 
 >Relevant certs are present within certs folder
 * Create servicegroups listening on services from hotdrink and colddrink app on port 80
 * Create content switching CS Vserver listening on port 443 (SSL)
@@ -86,6 +123,51 @@ Chekout the code from github using below link
 * Attach the relevant certs to the vservers
 * Create appropriate CS vserver policy and attach the dummy lb vservers
 * Send a https browser request to www.hotdrink.com and www.colddrink.com
+
+```
+Relevant Configuration:
+
+##NetScaler feature to be enabled for these use cases
+enable feature lb cs
+
+#HTTP Backend Service for HotDrink app running two instance
+add serviceGroup sg_hotdrink_http HTTP
+bind serviceGroup sg_hotdrink_http 172.100.100.3 80
+bind serviceGroup sg_hotdrink_http 172.100.100.4 80
+add lb vserver lbvs_hotdrink_http HTTP 0.0.0.0 0
+bind lb vserver lbvs_hotdrink_http sg_hotdrink_http
+
+#HTTP Backend Service for ColdDrink app running two instance
+add serviceGroup sg_colddrink_http HTTP
+bind serviceGroup sg_colddrink_http 172.100.100.5 80
+bind serviceGroup sg_colddrink_http 172.100.100.6 80
+add lb vserver lbvs_colddrink_http HTTP 0.0.0.0 0
+bind lb vserver lbvs_colddrink_http sg_colddrink_http
+
+#Add CS policy and action
+add cs action csa_hotdrink -targetLBVserver lbvs_hotdrink_http
+add cs action csa_colddrink -targetLBVserver lbvs_colddrink_http
+add cs policy csp_hotdrink -rule "HTTP.REQ.HOSTNAME.SERVER.EQ(\"www.hotdrink.com\")" -action csa_hotdrink
+add cs policy csp_colddrink -rule "HTTP.REQ.HOSTNAME.SERVER.EQ(\"www.colddrink.com\")" -action csa_colddrink 
+
+
+#Shell Commands
+cp -r /etc/ssl /tmp/
+
+#NetScaler Commands
+#Add SSL certs
+add ssl certKey cert_drink -cert "/tmp/ssl/wild-hotdrink.com-cert.pem" -key "/tmp/ssl/wild-hotdrink.com-key.pem"
+add ssl certkey colddrink_cert  -cert "/tmp/ssl/wild-colddrink.com-cert.pem" -key "/tmp/ssl/wild-colddrink.com-key.pem"
+add ssl certkey cacert -cert "/tmp/ssl/wild-rootcert.pem"
+
+#ADD SSL cs vserver for hotdrink and cold drink domain to content switch with SSL offload
+add cs vserver csv_drinks_ssl SSL 127.0.0.1 443
+bind cs vserver csv_drinks_ssl -policyName csp_hotdrink -priority 20001
+bind cs vserver csv_drinks_ssl -policyName csp_colddrink -priority 20002
+bind ssl vserver csv_drinks_ssl -certkeyName cert_drink
+
+```
+
 ## Usecase 3: SSL BACKEND:
 
 
@@ -101,5 +183,65 @@ Chekout the code from github using below link
 * Send a https browser request to www.hotdrink.com and www.colddrink.com
 * Add new CS and LB vserver for enabling clientauth and serverauth
 * Attach the relevant LB vservers with CS vserver for enabling clientauth and serverauth
-* Send a https request to www.hotdrink.com and www.colddrink.com
+* Send a https request to www.hotdrink.com:4443 and www.colddrink.com:4443
 
+```
+Relevant Configuration:
+
+##NetScaler feature to be enabled for these use cases
+enable feature lb cs
+
+#SSL Backend Service for HotDrink app running two instance
+add serviceGroup sg_hotdrink_ssl SSL
+bind serviceGroup sg_hotdrink_ssl 172.100.100.3 443
+bind serviceGroup sg_hotdrink_ssl 172.100.100.4 443
+add lb vserver lbvs_hotdrink_ssl HTTP 0.0.0.0 0
+bind lb vserver lbvs_hotdrink_ssl sg_hotdrink_ssl
+
+#SSL Backend Service for HotDrink app running two instance
+add serviceGroup sg_colddrink_ssl SSL
+bind serviceGroup sg_colddrink_ssl 172.100.100.5 443
+bind serviceGroup sg_colddrink_ssl 172.100.100.6 443
+add lb vserver lbvs_colddrink_ssl HTTP 0.0.0.0 0
+bind lb vserver lbvs_colddrink_ssl sg_colddrink_ssl
+
+#Shell Commands
+cp -r /etc/ssl /tmp/
+
+#NetScaler Commands
+#Add SSL certs
+add ssl certKey cert_drink -cert "/tmp/ssl/wild-hotdrink.com-cert.pem" -key "/tmp/ssl/wild-hotdrink.com-key.pem"
+add ssl certkey colddrink_cert  -cert "/tmp/ssl/wild-colddrink.com-cert.pem" -key "/tmp/ssl/wild-colddrink.com-key.pem"
+add ssl certkey cacert -cert "/tmp/ssl/wild-rootcert.pem"
+
+#SSL Backend Service for HotDrink app running two instance with clientauth enabled
+add serviceGroup sg_hotdrink_ssl_clientauth SSL
+bind serviceGroup sg_hotdrink_ssl_clientauth 172.100.100.3 443
+bind serviceGroup sg_hotdrink_ssl_clientauth 172.100.100.4 443
+add lb vserver lbvs_hotdrink_ssl_clientauth HTTP 0.0.0.0 0
+bind lb vserver lbvs_hotdrink_ssl_clientauth sg_hotdrink_ssl_clientauth
+bind ssl servicegroup sg_hotdrink_ssl_clientauth -certkey cacert -CA
+bind ssl servicegroup sg_hotdrink_ssl_clientauth -certkey cert_drink  
+set ssl servicegroup sg_hotdrink_ssl_clientauth -serverauth enabled
+
+#SSL Backend Service for coldDrink app running two instance with clientauth enabled
+add serviceGroup sg_colddrink_ssl_clientauth SSL
+bind serviceGroup sg_colddrink_ssl_clientauth 172.100.100.3 443
+bind serviceGroup sg_colddrink_ssl_clientauth 172.100.100.4 443
+add lb vserver lbvs_colddrink_ssl_clientauth HTTP 0.0.0.0 0
+bind lb vserver lbvs_colddrink_ssl_clientauth sg_colddrink_ssl_clientauth
+bind ssl servicegroup sg_colddrink_ssl_clientauth -certkey cacert -CA
+bind ssl servicegroup sg_colddrink_ssl_clientauth -certkey colddrink_cert  
+set ssl servicegroup sg_colddrink_ssl_clientauth -serverauth enabled
+
+#SSL cs vserver with clientauth enabled
+add cs vserver csvs_hotdrink_ssl_clientauth SSL 127.0.0.1 4443
+add cs action csa_hotdrink_clientauth -targetLBVserver lbvs_hotdrink_ssl_clientauth
+add cs action csa_colddrink_clientauth -targetLBVserver lbvs_colddrink_ssl_clientauth
+add cs policy csp_hotdrink_clientauth -rule "HTTP.REQ.HOSTNAME.SERVER.EQ(\"www.hotdrink.com\")" -action csa_hotdrink_clientauth
+add cs policy csp_colddrink_clientauth -rule "HTTP.REQ.HOSTNAME.SERVER.EQ(\"www.colddrink.com\")" -action csa_colddrink_clientauth
+set ssl vserver csvs_hotdrink_ssl_clientauth -clientauth enabled
+bind ssl vserver csvs_hotdrink_ssl_clientauth -certkey cacert -CA
+bind ssl vserver csvs_hotdrink_ssl_clientautH -certkeyName cert_drink
+
+```
