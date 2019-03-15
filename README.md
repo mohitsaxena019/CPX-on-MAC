@@ -14,7 +14,7 @@ Docker for Mac launches only if all of these requirements are met.
 # Install and run Docker for Mac
 * Double-click Docker.dmg to open the installer, then drag Moby the whale to the Applications folder.
 * Double-click Docker.app in the Applications folder to start Docker. (In the example below, the Applications folder is in “grid” view mode.)
-* Login with your docker id, if you done have docker id please create one on below link
+* Login with your docker id, if you dont have docker id please create one on below link
   * https://hub.docker.com/signup
 # Install Git
 * To browse the code of this sample demo you need to install git on your mac machine.
@@ -45,19 +45,47 @@ Chekout the code from github using below link
 * git clone https://github.com/mohitsaxena019/CPX-on-MAC.git
 >Once the code is downloaded, Navigate to CPX-on-MAC/cpx-demo folder. And use below command to start and stop the test environment. Before starting the test environment please make sure to update the /etc/hosts file with above mentioned domain names.
 >>Deploy the demo
-* docker-compose up -d
+```
+ docker-compose up -d
+```
 >>Destroy the demo
-* docker-compose down
+```
+docker-compose down
+```
 >>To Access the CPX once deployment is up 
-* docker exec -it cpxdemo_cpx_1 bash
+```
+ docker exec -it cpxdemo_cpx_1 bash
+```
+OR
+
+```
+docker exec -it cpxdemo_cpx_1 bash
+```
+
+OR use the container ID of CPX
+
+```
+docker ps -a
+docker exec -it <CPX container id> bash
+```
+
 >>To access CPX CLI once you login to cpx 
-* cli_script.sh "show ver"
+```
+cli_script.sh "show ver"
+```
 >>For NITRO API access to CPX
-* http://localhost:9080/nitro/v1/config/lbvserver
+```
+ http://localhost:9080/nitro/v1/config/lbvserver
+```
 >>For NITRO API access over HTTPS 
-* https://localhost:9443/nitro/v1/config/lbvserver
+
+```
+https://localhost:9443/nitro/v1/config/lbvserver
+```
 >>For more information on configuring Citrix ADC
-* https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
+```
+https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
+```
 # Understanding Demo use cases
 >All the configuration related to Demo use cases are applied on the CPX when 'docker-compose up -d' is executed
 ## Usecase 1: Basic content switching: switch based on domain. Use servicegroups and HTTP monitors.
@@ -72,7 +100,7 @@ Chekout the code from github using below link
 * Create two dummy lb vservers 
 * Create appropriate CS vserver policy and attach the dummy lb vservers
 * Add http monitors to servicegroup
-* Send a browser request to www.hotdrink.com and www.colddrink.com
+* Send a browser request to http://www.hotdrink.com and http://www.colddrink.com
 
 ```
 Relevant configuration:
@@ -121,7 +149,7 @@ bind cs vserver csv_drinks_http -policyName csp_colddrink -priority 20002
 * Create two dummy lb vservers
 * Attach the relevant certs to the vservers
 * Create appropriate CS vserver policy and attach the dummy lb vservers
-* Send a https browser request to www.hotdrink.com and www.colddrink.com
+* Send a https browser request to https://www.hotdrink.com and https://www.colddrink.com
 
 ```
 Relevant Configuration:
@@ -182,7 +210,7 @@ bind ssl vserver csv_drinks_ssl -certkeyName cert_drink
 * Send a https browser request to www.hotdrink.com and www.colddrink.com
 * Add new CS and LB vserver for enabling clientauth and serverauth
 * Attach the relevant LB vservers with CS vserver for enabling clientauth and serverauth
-* Send a https request to www.hotdrink.com:4443 and www.colddrink.com:4443
+* Send a https request to https://www.hotdrink.com:4443 and https://www.colddrink.com:4443
 
 ```
 Relevant Configuration:
@@ -250,7 +278,7 @@ bind ssl vserver csvs_hotdrink_ssl_clientautH -certkeyName cert_drink
 
 CPX login
 ```
-docker exec -it <cpx docker name or container ID> bash
+docker exec -it <cpx container name or container ID> bash
 ```
 Enable responder rewrite feature
 ```
@@ -329,7 +357,7 @@ Access www.hotdrink.com to view the webpage
 ## Debugging CPX using command line
 CPX login
 ```
-docker exec -it <cpx docker name or container ID> bash
+docker exec -it <cpx container name or container ID> bash
 ```
 Verify CS vserver
 ```
@@ -384,6 +412,14 @@ enable ns mode L3 USNIP PMTUD
 
 OUTPUT TRIMMED
 .......
+```
+
+If the configuration needs to be applied fresh, a clear configuration on CPX can be used
+
+```
+root@590b90a51752:/# cli_script.sh "clear config -force full"
+exec: clear config -force full
+Done
 ```
 
 
