@@ -424,7 +424,10 @@ Done
 
 
 # Scripting CPX through nitro SDK Python API
+
 >Install python on the system
+
+
 Untar the nssrc.tar file under script-python folder
 ```
 tar -xvf nssrc.tar
