@@ -306,3 +306,79 @@ OUTPUT TRIMMED
 ```
 
 
+# Example of applying a responder policy through command line on CPX
+## Denying access to www.hotdrink.com using responder policy
+
+Enable responder rewrite feature
+```
+root@590b90a51752:/# cli_script.sh 'enable feature responder rewrite'
+exec: enable feature responder rewrite
+Done
+```
+Add a responder action to respond with a certain http header when a http request arrives to CPX
+```
+root@590b90a51752:/# cli_script.sh 'add responder action respond_custom_content respondwith "\"HTTP/1.1 200 OK\r\nAccept-Encoding: text\r\nServer: Test-Server\r\n\r\n\""'
+exec: add responder action respond_custom_content respondwith "\"HTTP/1.1 200 OK\r\nAccept-Encoding: text\r\nServer: Test-Server\r\n\r\n\""
+```
+Add a responder policy with the above action if url contains /
+```
+root@590b90a51752:/# cli_script.sh 'add responder policy respond_custom_content_policy "http.req.url.contains(\"/\")" respond_custom_content'
+exec: add responder policy respond_custom_content_policy "http.req.url.contains(\"/\")" respond_custom_content
+Done
+```
+
+Check the applied responder config
+```
+root@590b90a51752:/# cli_script.sh 'show run' | grep responder
+add responder action respond_custom_content respondwith "\"HTTP/1.1 200 OK\r\nAccept-Encoding: text\r\nServer: Test-Server\r\n\r\n\""
+add responder policy respond_custom_content_policy "http.req.url.contains(\"/\")" respond_custom_content
+```
+Apply the policy to hotdrink lb vserver
+
+```
+root@590b90a51752:/# cli_script.sh 'bind lb vserver lbvs_hotdrink_http -policyname respond_custom_content_policy -priority 1000' 
+exec: bind lb vserver lbvs_hotdrink_http -policyname respond_custom_content_policy -priority 1000
+Done
+```
+
+Check the browser by accessing www.hotdrink.com
+
+A browser query would show a blank page
+
+```
+root@slave40:~/MohitCPX/CPX-on-MAC/cpx-demo# curl -vvv  http://www.hotdrink.com
+* Rebuilt URL to: http://www.hotdrink.com
+*   Trying 127.0.0.1...
+* Connected to www.hotdrink.com (127.0.0.1) port 1080 (#0)
+> GET / HTTP/1.1
+> Host: www.hotdrink.com:1080
+> User-Agent: curl/7.47.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK =========> Response from responder policy
+< Accept-Encoding: text =========> Response from responder policy
+< Server: Test-Server=========> Response from responder policy
+* no chunk, no close, no size. Assume close to signal end
+< 
+* Closing connection 0
+```
+
+Unbind the responder policy to allow access to www.hotdrink.com
+```
+root@590b90a51752:/# cli_script.sh 'unbind lb vserver lbvs_hotdrink_http -policyname respond_custom_content_policy'
+exec: unbind lb vserver lbvs_hotdrink_http -policyname respond_custom_content_policy
+Done
+```
+
+Access www.hotdrink.com to view the webpage
+
+## Similarly try adding rewrite policies to CPX. Please check the documentation within the following links for adding rewrite and responder policies
+
+[CPX Rewrite Policy](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/rewrite/rewrite-policy/rewrite-policy/)
+
+[CPX Rewrite Action](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/rewrite/rewrite-action/rewrite-action/)
+
+[CPX Responder Policy](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/responder/responder-policy/responder-policy/)
+
+[CX Responder Action](https://developer-docs.citrix.com/projects/netscaler-command-reference/en/12.0/responder/responder-action/responder-action/)
+
