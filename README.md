@@ -5,7 +5,7 @@ Getting started first time with Docker containers on MAC you need to install Mac
   * https://download.docker.com/mac/stable/Docker.dmg
 >For latest information and documentation on MAC for docker please visit
   * https://docs.docker.com/v17.12/docker-for-mac/install/#download-docker-for-mac
-# System Requirements: 
+# System Requirements 
 Docker for Mac launches only if all of these requirements are met.
 * Mac hardware must be a 2010 or newer model,
 * You can check to see if your machine has virtualization support : sysctl kern.hv_support
@@ -16,6 +16,11 @@ Docker for Mac launches only if all of these requirements are met.
 * Double-click Docker.app in the Applications folder to start Docker. (In the example below, the Applications folder is in “grid” view mode.)
 * Login with your docker id, if you done have docker id please create one on below link
   * https://hub.docker.com/signup
+# Install Git
+* To browse the code of this sample demo you need to install git on your mac machine.
+ * Open Terminal of your choice
+ * Type git --version on shell
+ * This will automatically prompt you to git installer
 # Verify your Docker installation
 * Open the terminal of your choice.
 * Type docker login.
