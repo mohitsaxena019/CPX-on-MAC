@@ -1,0 +1,52 @@
+version: '3.1'
+services:
+        cpx:
+                image: quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16
+                cap_add:
+                        - NET_ADMIN
+                networks:
+                        cpx:
+                          ipv4_address: 172.100.100.254
+                ports:
+                        - 9080:9080
+                        - 9443:9443
+                        - 80:80
+                        - 443:443
+                depends_on:
+                        - hotdrinks1
+                        - hotdrinks2
+                        - colddrinks1
+                        - colddrinks2
+                environment:
+                        - EULA=yes
+                volumes:
+                        - ./cpx.conf:/etc/cpx.conf
+                        - ./ssl:/etc/ssl
+
+        hotdrinks1:
+                image: quay.io/sample-apps/hotdrinks:v1
+                networks:
+                        cpx:
+                          ipv4_address: 172.100.100.3
+        hotdrinks2:
+                image: quay.io/sample-apps/hotdrinks:v1
+                networks:
+                        cpx:
+                          ipv4_address: 172.100.100.4
+        colddrinks1:
+                image: quay.io/sample-apps/colddrinks:v1
+                networks:
+                        cpx:
+                          ipv4_address: 172.100.100.5
+        colddrinks2:
+                image: quay.io/sample-apps/colddrinks:v1
+                networks:
+                        cpx:
+                          ipv4_address: 172.100.100.6
+networks:
+    cpx:
+      driver: bridge
+      ipam:
+        driver: default
+        config:
+          - subnet: 172.100.100.0/24
