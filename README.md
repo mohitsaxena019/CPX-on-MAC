@@ -43,4 +43,14 @@ Chekout the code from github using below link
 * docker-compose up -d
 >>Destroy the demo
 * docker-compose down
-# Starting with Citrix ADC CPX
+>>To Access the CPX once deployment is up 
+* docker exec -it cpx-demo_cpx_1 bash
+>>To access CPX CLI once you login to cpx 
+* cli_script.sh "show ver"
+>>For NITRO API access to CPX
+* http://localhost:9080/nitro/v1/config/lbvserver
+>>For NITRO API access over HTTPS 
+* https://localhost:9443/nitro/v1/config/lbvserver
+>>For more information on configuring Citrix ADC
+* https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
+# Understanding Demo use cases
