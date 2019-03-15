@@ -59,8 +59,9 @@ Chekout the code from github using below link
 >>For more information on configuring Citrix ADC
 * https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
 # Understanding Demo use cases
-# Usecase 1: Basic content switching: switch based on domain. Use servicegroups and HTTP monitors.
->Topology file: citrix-walmart topology.pptx
+## Usecase 1: Basic content switching: switch based on domain. Use servicegroups and HTTP monitors.
+### Topology
+<img width="1278" alt="Screenshot 2019-03-15 at 10 31 43 PM" src="https://user-images.githubusercontent.com/43468858/54448623-30ad0500-4772-11e9-8808-e454a9ecc8e4.png">
 >Relevant configs relating to below procedures are present within cpx.conf file
 * Create servicegroups listening on services from hotdrink and coldrink app on port 80
 * Create content switching CS vserver listening on HTTP
@@ -68,8 +69,9 @@ Chekout the code from github using below link
 * Create appropriate CS vserver policy and attach the dummy lb vservers
 * Add http monitors to lb vserver
 * Send a browser request to www.hotdrink.com and www.colddrink.com
-# Usecase 2: SSL OFFLOAD:
->Topology file:citrix-walmart topology.pptx
+## Usecase 2: SSL OFFLOAD:
+### Topology
+<img width="1272" alt="Screenshot 2019-03-15 at 10 35 02 PM" src="https://user-images.githubusercontent.com/43468858/54448953-ff810480-4772-11e9-83af-2f28520a3715.png">
 >Relevant configs relating to below procedures are present within cpx.conf file
 >Relevant certs are present within certs folder
 * Create servicegroups listening on services from hotdrink and colddrink app on port 80
@@ -78,8 +80,9 @@ Chekout the code from github using below link
 * Attach the relevant certs to the vservers
 * Create appropriate CS vserver policy and attach the dummy lb vservers
 * Send a https browser request to www.hotdrink.com and www.colddrink.com
-#Usecase 3: SSL BACKEND:
->Topology file:citrix-walmart topology.pptx
+## Usecase 3: SSL BACKEND:
+### Topology 
+<img width="1262" alt="Screenshot 2019-03-15 at 10 38 45 PM" src="https://user-images.githubusercontent.com/43468858/54449014-1f182d00-4773-11e9-9df3-eae30315b56f.png">
 >Relevant configs relating to below procedures are present within cpx.conf file
 >Relevant certs are present within certs folder
 * Create servicegroups listening on services from hotdrink and colddrink app on port 443
