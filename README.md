@@ -423,4 +423,51 @@ Done
 ```
 
 
+# Scripting CPX through nitro SDK Python API
+>Install python on the system
+Untar the nssrc.tar file under script-python folder
+```
+tar -xvf nssrc.tar
+```
+Execute the python script to configure CPX
+
+```
+python config_script.py
+```
+The logs of the script can be viewed under the same folder on file  citrix_nitro.log
+```
+tail -f citrix_nitro.log
+```
+A success message on logs indicates successful configuration of CPX through Nitro API
+```
+DEBUG:root:SUCCESS: Configuration completed
+INFO:root:Configuration completed
+```
+
+New Nitro calls can be added or modified within the following function
+```
+def call_nitro_commands(ns_session):
+    try:
+        ns_session.clear_config(force=True, level='full')
+        logging.debug('Clear config executed')
+        needed_features = [
+            nsfeature.Feature.CS,
+            nsfeature.Feature.LB,
+            nsfeature.Feature.SSL,
+            nsfeature.Feature.RESPONDER,
+            nsfeature.Feature.REWRITE]
+        ns_session.enable_features(needed_features)
+
+        logging.debug('Adding CS vserver')
+        csvserver_instance= csvserver()
+        csvserver_instance.name = 'drinks_sample'
+        csvserver_instance.ipv46= '127.0.0.1'
+        csvserver_instance.servicetype = 'http'
+        csvserver_instance.port = '443'
+        csvserver_instance.add(ns_session, csvserver_instance)
+	
+	TRIMMED
+	.........
+```
+
 
