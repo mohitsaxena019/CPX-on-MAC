@@ -112,8 +112,7 @@ bind cs vserver csv_drinks_http -policyName csp_colddrink -priority 20002
 ## Usecase 2: SSL OFFLOAD:
 
 
-<img width="1272" alt="Screenshot 2019-03-15 at 10 35 02 PM" src="https://user-images.githubusercontent.com/43468858/54448953-ff810480-4772-11e9-83af-2f28520a3715.png">
-
+<img width="1272" alt="Screenshot 2019-03-15 at 11 45 52 PM" src="https://user-images.githubusercontent.com/43468858/54453107-9bfbd480-477c-11e9-8b41-ecca452a1403.png">
 
 >Relevant configs relating to below procedures are present within cpx.conf file. 
 >Relevant certs are present within certs folder
@@ -170,8 +169,8 @@ bind ssl vserver csv_drinks_ssl -certkeyName cert_drink
 
 ## Usecase 3: SSL BACKEND:
 
+<img width="1276" alt="Screenshot 2019-03-15 at 11 46 09 PM" src="https://user-images.githubusercontent.com/43468858/54453219-e2513380-477c-11e9-9b3c-78cc0de2cb56.png">
 
-<img width="1262" alt="Screenshot 2019-03-15 at 10 38 45 PM" src="https://user-images.githubusercontent.com/43468858/54449014-1f182d00-4773-11e9-9df3-eae30315b56f.png">
 
 >Relevant configs relating to below procedures are present within cpx.conf file
 >Relevant certs are present within certs folder
