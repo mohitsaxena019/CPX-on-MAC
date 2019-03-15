@@ -97,8 +97,8 @@ https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/configure-cpx.html
 >Relevant configs relating to below procedures are present within cpx.conf file
 * Create servicegroups listening on services from hotdrink and coldrink app on port 80
 * Create content switching CS vserver listening on HTTP
-* Create two dummy lb vservers 
-* Create appropriate CS vserver policy and attach the dummy lb vservers
+* Create two non-addressable lb vservers 
+* Create appropriate CS vserver policy and attach the non-addressable lb vservers
 * Add http monitors to servicegroup
 * Send a browser request to http://www.hotdrink.com and http://www.colddrink.com
 
@@ -146,9 +146,9 @@ bind cs vserver csv_drinks_http -policyName csp_colddrink -priority 20002
 >Relevant certs are present within certs folder
 * Create servicegroups listening on services from hotdrink and colddrink app on port 80
 * Create content switching CS Vserver listening on port 443 (SSL)
-* Create two dummy lb vservers
+* Create two non-addressable lb vservers
 * Attach the relevant certs to the vservers
-* Create appropriate CS vserver policy and attach the dummy lb vservers
+* Create appropriate CS vserver policy and attach the non-addressable lb vservers
 * Send a https browser request to https://www.hotdrink.com and https://www.colddrink.com
 
 ```
@@ -204,9 +204,9 @@ bind ssl vserver csv_drinks_ssl -certkeyName cert_drink
 >Relevant certs are present within certs folder
 * Create servicegroups listening on services from hotdrink and colddrink app on port 443
 * Create content switching CS Vserver listening on port 443 (SSL)
-* Create two dummy lb vservers
+* Create two non-addressable lb vservers
 * Attach the relevant certs to the vserver
-* Create appropriate CS VServer policy and attach the dummy lb vservers
+* Create appropriate CS VServer policy and attach the non-addressable lb vservers
 * Send a https browser request to www.hotdrink.com and www.colddrink.com
 * Add new CS and LB vserver for enabling clientauth and serverauth
 * Attach the relevant LB vservers with CS vserver for enabling clientauth and serverauth
