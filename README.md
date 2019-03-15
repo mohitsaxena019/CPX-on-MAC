@@ -39,8 +39,8 @@ This demo uses following ports
 Chekout the code from github using below link
 * git clone https://github.com/mohitsaxena019/CPX-on-MAC.git
 >Once the code is downloaded, Navigate to CPX-on-MAC/cpx-demo folder. And use below command to start and stop the test environment. Before starting the test environment please make sure to update the /etc/hosts file with above mentioned domain names.
->Deploy the demo
+>>Deploy the demo
 * docker-compose up -d
->Destroy the demo
+>>Destroy the demo
 * docker-compose down
 # Starting with Citrix ADC CPX
