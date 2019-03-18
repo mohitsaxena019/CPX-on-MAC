@@ -55,6 +55,8 @@ Chekout the code from github using below link
  * Creates a network bridge for communucation across the applications
   
 The current CPX image specified within [docker-compose.yml](https://github.com/mohitsaxena019/CPX-on-MAC/blob/master/cpx-demo/docker-compose.yml) can be modified to any required version
+
+The CPX image can be pulled from quay
 ```
 image: quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16
 ```
