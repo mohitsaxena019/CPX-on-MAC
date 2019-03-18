@@ -473,6 +473,21 @@ A success message on logs indicates successful configuration of CPX through Nitr
 DEBUG:root:SUCCESS: Configuration completed
 INFO:root:Configuration completed
 ```
+The applied configuration on CPX can be verified using the following command
+
+
+```
+CPX login:
+docker exec -it <cpx container name or container ID> bash
+
+
+root@590b90a51752:/# cli_script.sh 'show run' | grep example
+add serviceGroup sg_hotdrink_http_example HTTP -maxClient 0 -maxReq 0 -cip DISABLED -usip NO -useproxyport YES -cltTimeout 180 -svrTimeout 360 -CKA NO -TCPB NO -CMP NO
+add lb vserver lbvs_hotdrink_http_example HTTP 0.0.0.0 0 -persistenceType NONE -cltTimeout 180
+bind lb vserver lbvs_hotdrink_http_example sg_hotdrink_http_example
+bind serviceGroup sg_hotdrink_http_example 172.100.100.3 80
+root@590b90a51752:/# 
+```
 
 New Nitro calls can be added or modified within the following function
 ```
