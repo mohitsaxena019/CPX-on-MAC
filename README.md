@@ -48,6 +48,16 @@ Chekout the code from github using below link
 ```
  docker-compose up -d
 ```
+ The above command will install the following applications on the system
+ * CPX application
+ * colddrinks application
+ * hotdrinks applcation
+ * Creates a network bridge for communucation across the applications
+  
+The current CPX image specified within [docker-compose.yml](https://github.com/mohitsaxena019/CPX-on-MAC/blob/master/cpx-demo/docker-compose.yml) can be modified to any required version
+```
+image: quay.io/citrix/citrix-k8s-cpx-ingress:12.1-51.16
+```
 >>Destroy the demo
 ```
 docker-compose down
@@ -359,6 +369,23 @@ CPX login
 ```
 docker exec -it <cpx container name or container ID> bash
 ```
+
+Checking logs within CPX
+```
+root@75a3c02f18a8:/# cat /var/log/ns.log 
+Mar 18 05:30:34 75a3c02f18a8 rsyslogd: [origin software="rsyslogd" swVersion="8.16.0" x-pid="129" x-info="http://www.rsyslog.com"] start
+Mar 18 05:30:35 75a3c02f18a8 nsppe: PPE-0 : Lower PE :Debug Info 1: 0x6d5a56da 0x255b0ec2 0x4167253d 0x43a38fb0 0xd0ca2bcb 0xae7b30b4 0x77cb2da3 0x8030f20c 0x4167253d 0x43a38fb0#012 
+Mar 18 05:30:35 75a3c02f18a8 nsppe: IPv6 address fe80:0:0:0:40ca:29ff:feb8:4352/64 modification on interface ns2 failed
+Mar 18 05:30:34 75a3c02f18a8 rsyslogd-2222: command 'KLogPermitNonKernelFacility' is currently not permitted - did you already set it via a RainerScript command (v6+ config)? [v8.16.0 try http://www.rsyslog.com/e/2222 ]
+Mar 18 05:30:34 75a3c02f18a8 rsyslogd: imklog: cannot open kernel log (/proc/kmsg): Operation not permitted.
+Mar 18 05:30:34 75a3c02f18a8 rsyslogd-2145: activation of module imklog failed [v8.16.0 try http://www.rsyslog.com/e/2145 ]
+Mar 18 05:30:38 75a3c02f18a8 nsaggregatord: nsaggregator: system command 'echo nslog: cannot access /var/nslog/nslog.nextfile due to error=2, use 0 >> /var/nslog/ns.log' failed ret -1
+Mar 18 05:30:38 75a3c02f18a8 nsaggregatord: nsaggregator: system command 'echo nslog: `date`: renaming /var/nslog/newnslog to /var/nslog/newnslog.0 >> /var/nslog/ns.log' failed ret -1
+
+TRIMMED
+.........
+```
+
 Verify CS vserver
 ```
 root@590b90a51752:/# cli_script.sh 'show cs vserver'
