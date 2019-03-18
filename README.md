@@ -228,20 +228,6 @@ Relevant Configuration:
 ##NetScaler feature to be enabled for these use cases
 enable feature lb cs
 
-#SSL Backend Service for HotDrink app running two instance
-add serviceGroup sg_hotdrink_ssl SSL
-bind serviceGroup sg_hotdrink_ssl 172.100.100.3 443
-bind serviceGroup sg_hotdrink_ssl 172.100.100.4 443
-add lb vserver lbvs_hotdrink_ssl HTTP 0.0.0.0 0
-bind lb vserver lbvs_hotdrink_ssl sg_hotdrink_ssl
-
-#SSL Backend Service for HotDrink app running two instance
-add serviceGroup sg_colddrink_ssl SSL
-bind serviceGroup sg_colddrink_ssl 172.100.100.5 443
-bind serviceGroup sg_colddrink_ssl 172.100.100.6 443
-add lb vserver lbvs_colddrink_ssl HTTP 0.0.0.0 0
-bind lb vserver lbvs_colddrink_ssl sg_colddrink_ssl
-
 #Shell Commands
 cp -r /etc/ssl /tmp/
 
@@ -263,8 +249,8 @@ set ssl servicegroup sg_hotdrink_ssl_clientauth -serverauth enabled
 
 #SSL Backend Service for coldDrink app running two instance with clientauth enabled
 add serviceGroup sg_colddrink_ssl_clientauth SSL
-bind serviceGroup sg_colddrink_ssl_clientauth 172.100.100.3 443
-bind serviceGroup sg_colddrink_ssl_clientauth 172.100.100.4 443
+bind serviceGroup sg_colddrink_ssl_clientauth 172.100.100.5 443
+bind serviceGroup sg_colddrink_ssl_clientauth 172.100.100.6 443
 add lb vserver lbvs_colddrink_ssl_clientauth HTTP 0.0.0.0 0
 bind lb vserver lbvs_colddrink_ssl_clientauth sg_colddrink_ssl_clientauth
 bind ssl servicegroup sg_colddrink_ssl_clientauth -certkey cacert -CA
